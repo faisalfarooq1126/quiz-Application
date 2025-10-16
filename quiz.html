@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz App</title>
+  </head>
+  <body>
+    <style>
+      body{
+        background-color: greenyellow;
+      }
+    </style>
+      <center>
+
+          <h1 style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Quiz Application</h1>
+          
+          <br />
+          
+          <p id="time">2:00</p>
+          <h4 id="ques"></h4>
+
+    <input  class="input" value="1" onclick="trigger()" name="options" type="radio" />
+    <label  id="opt1"></label>
+    <br />
+    <br />
+    <input value="2" onclick="trigger()" name="options" type="radio" />
+    <label id="opt2"></label>
+
+    <br />
+    <br />
+
+    <input value="3" onclick="trigger()" name="options" type="radio" />
+    <label id="opt3"></label>
+    <br />
+    <br />
+
+    <button id="btn" disabled onclick="nextQuestion()">Next</button>
+    <script src="quiz.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</center>
+  </body>
+</html>

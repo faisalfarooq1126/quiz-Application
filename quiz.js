@@ -1,3 +1,18 @@
+ var firebaseConfig = {
+    apiKey: "AIzaSyDhKWFe4ZPZpN2d906OC80U02cLYIZAwCI",
+    authDomain: "quiz-application-b9a66.firebaseapp.com",
+    projectId: "quiz-application-b9a66",
+    storageBucket: "quiz-application-b9a66.firebasestorage.app",
+    messagingSenderId: "113612124629",
+    appId: "1:113612124629:web:5d0b98310d5bf703d24d5c",
+    measurementId: "G-DEN287DBP6"
+  };
+
+  // Initialize Firebase
+  var app = firebase.initializeApp(firebaseConfig);
+  var db = firebase.database();
+
+
 var questions = [
   {
     question: "Q1: HTML Stands for?",
@@ -88,8 +103,6 @@ nextBtn.style.paddingLeft =  "20px";
 nextBtn.style.paddingRight = "20px";
 nextBtn.style.borderRadius = "20px";
 nextBtn.style.fontSize = "20px";
-nextBtn.style.backgroundColor = "grey";
-nextBtn.style.color = "blue";
 var score = 0;
 var min = 1;
 var sec = 59;
@@ -120,33 +133,61 @@ function nextQuestion() {
       var userSelectedValue = allInputs[i].value;
 
       var selectedOption = questions[index - 1]["option" + userSelectedValue];
-
       var correctAnswer = questions[index - 1]["corrAnswer"];
+      var currentQuestion = questions[index - 1]["question"];
 
+       db.ref("quizResponses").push({
+         question: currentQuestion,
+         userAnswer: selectedOption,
+         correctAnswer: correctAnswer,
+         timestamp: new Date().toLocaleString()
+  });
       if (correctAnswer === selectedOption) {
         score++;
       }
-      console.log(selectedOption);
+
+      console.log("Saved:", currentQuestion, selectedOption, correctAnswer);
+
     }
     nextBtn.disabled = true;
   }
 
-  if (index > questions.length - 1) {
+ if (index >= questions.length) {
+  if (!window.quizFinished) {
+    window.quizFinished = true; 
+    
+    var percentage = ((score / questions.length) * 100).toFixed(2);
+
+    db.ref("quizResults").push({
+      totalQuestions: questions.length,
+      correctAnswers: score,
+      percentage: percentage,
+      timestamp: new Date().toLocaleString()
+    });
+
     Swal.fire({
       title: "Good job!",
-      text: ((score / questions.length) * 100).toFixed(3),
+      text: "Your score: " + percentage + "%",
       icon: "success",
     });
-  } else {
-    quesElement.innerText = questions[index].question;
-    option1.innerText = questions[index].option1;
-    option2.innerText = questions[index].option2;
-    option3.innerText = questions[index].option3;
-    index++;
   }
+  return; 
+} else {
+  quesElement.innerText = questions[index].question;
+  option1.innerText = questions[index].option1;
+  option2.innerText = questions[index].option2;
+  option3.innerText = questions[index].option3;
+  index++;
+}
+
 }
 nextQuestion();
 
 function trigger() {
   nextBtn.disabled = false;
 }
+
+window.addEventListener("beforeunload", function () {
+  db.ref().remove();
+});
+
